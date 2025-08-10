@@ -9,7 +9,7 @@
 
     /* Bundler mode */
     "moduleResolution": "Bundler",
-    "allowImportingTsExtensions": true,
+    "allowImportingTsExtensions": false,
     "isolatedModules": true,
     "moduleDetection": "force",
     "noEmit": true,
@@ -23,11 +23,11 @@
     "noUncheckedSideEffectImports": true,
     "paths": {
       "@app/*": ["src/app/*"],
+      "@pages/*": ["src/pages/*"],
       "@shared/*": ["src/shared/*"],
       "@entities/*": ["src/entities/*"],
       "@features/*": ["src/features/*"],
-      "@widgets/*": ["src/widgets/*"],
-      "@pages/*": ["src/pages/*"]
+      "@widgets/*": ["src/widgets/*"]
     }
   },
   "include": ["src"]
