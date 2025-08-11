@@ -1,8 +1,7 @@
+import { POSTS_QUERY_KEY } from "@entities/post/model/keys"
 import { Post } from "@entities/post/model/types"
-import { createQueryKeys, http } from "@shared/api"
+import { http } from "@shared/api"
 import { useQuery } from "@tanstack/react-query"
-
-export const POSTS_QUERY_KEY = createQueryKeys("posts")
 
 interface GetPostsRequestParams {
   skip?: number
