@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query"
 
 interface GetUsersRequestParams {
   limit?: number
-  select?: keyof User
+  select?: string
 }
 
 interface GetUsersResponse {
@@ -15,7 +15,7 @@ interface GetUsersResponse {
   users: User[]
 }
 
-const getUsers = async (params: GetUsersRequestParams) => {
+export const getUsers = async (params: GetUsersRequestParams) => {
   const response = await http.get<GetUsersResponse>("/users/", {
     params,
   })

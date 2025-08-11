@@ -4,19 +4,15 @@ import { getUsers } from "@entities/user"
 import { http } from "@shared/api"
 import { useQuery } from "@tanstack/react-query"
 
-interface GetPostsWithSearchResponse {
+interface GetPostsWithTagResponse {
   limit: number
   skip: number
   total: number
   posts: Post[]
 }
 
-const getPostsWithSearch = async (searchQuery: string) => {
-  const responsePosts = await http.get<GetPostsWithSearchResponse>("/posts/search", {
-    params: {
-      q: searchQuery,
-    },
-  })
+const getPostsWithTag = async (tag: string) => {
+  const responsePosts = await http.get<GetPostsWithTagResponse>(`/posts/tag/${tag}`)
 
   const responseUsers = await getUsers({
     limit: 0,
@@ -31,9 +27,9 @@ const getPostsWithSearch = async (searchQuery: string) => {
   return result
 }
 
-export const useGetPostsWithSearch = (searchQuery: string) => {
+export const useGetPostsWithTag = (tag: string) => {
   return useQuery({
-    queryKey: POSTS_QUERY_KEY.list([{ search: searchQuery }]),
-    queryFn: () => getPostsWithSearch(searchQuery),
+    queryKey: POSTS_QUERY_KEY.list([{ tag }]),
+    queryFn: () => getPostsWithTag(tag),
   })
 }

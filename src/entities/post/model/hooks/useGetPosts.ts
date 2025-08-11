@@ -1,5 +1,6 @@
 import { POSTS_QUERY_KEY } from "@entities/post/model/keys"
 import { Post } from "@entities/post/model/types"
+import { getUsers } from "@entities/user"
 import { http } from "@shared/api"
 import { useQuery } from "@tanstack/react-query"
 
@@ -21,7 +22,7 @@ interface GetPostsResponse {
 const getPosts = async (params: GetPostsRequestParams) => {
   const { skip, limit, select, sortBy, order } = params
 
-  const response = await http.get<GetPostsResponse>("/posts", {
+  const responsePosts = await http.get<GetPostsResponse>("/posts", {
     params: {
       skip,
       limit,
@@ -31,7 +32,17 @@ const getPosts = async (params: GetPostsRequestParams) => {
     },
   })
 
-  return response
+  const responseUsers = await getUsers({
+    limit: 0,
+    select: "username,image",
+  })
+
+  const result = responsePosts.posts.map((post) => ({
+    ...post,
+    author: responseUsers.users.find((user) => user.id === post.userId),
+  }))
+
+  return result
 }
 
 export const useGetPosts = (params: GetPostsRequestParams) => {
