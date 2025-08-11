@@ -1,4 +1,5 @@
 import { AddPostButton } from "@features/post"
+import { highlightText } from "@shared/lib/highlightText"
 import { Button } from "@shared/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@shared/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@shared/ui/dialog"
@@ -24,7 +25,7 @@ export const PostsManagerPage = () => {
   const [selectedPost, setSelectedPost] = useState(null)
   const [sortBy, setSortBy] = useState(queryParams.get("sortBy") || "")
   const [sortOrder, setSortOrder] = useState(queryParams.get("sortOrder") || "asc")
-  const [showEditDialog, setShowEditDialog] = useState(false)
+
   const [loading, setLoading] = useState(false)
   const [tags, setTags] = useState([])
   const [selectedTag, setSelectedTag] = useState(queryParams.get("tag") || "")
@@ -134,22 +135,6 @@ export const PostsManagerPage = () => {
       console.error("태그별 게시물 가져오기 오류:", error)
     }
     setLoading(false)
-  }
-
-  // 게시물 업데이트
-  const updatePost = async () => {
-    try {
-      const response = await fetch(`/api/posts/${selectedPost.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(selectedPost),
-      })
-      const data = await response.json()
-      setPosts(posts.map((post) => (post.id === data.id ? data : post)))
-      setShowEditDialog(false)
-    } catch (error) {
-      console.error("게시물 업데이트 오류:", error)
-    }
   }
 
   // 게시물 삭제
@@ -292,21 +277,6 @@ export const PostsManagerPage = () => {
     setSelectedTag(params.get("tag") || "")
   }, [location.search])
 
-  // 하이라이트 함수 추가
-  const highlightText = (text: string, highlight: string) => {
-    if (!text) return null
-    if (!highlight.trim()) {
-      return <span>{text}</span>
-    }
-    const regex = new RegExp(`(${highlight})`, "gi")
-    const parts = text.split(regex)
-    return (
-      <span>
-        {parts.map((part, i) => (regex.test(part) ? <mark key={i}>{part}</mark> : <span key={i}>{part}</span>))}
-      </span>
-    )
-  }
-
   // 댓글 렌더링
   const renderComments = (postId) => (
     <div className="mt-2">
@@ -433,8 +403,6 @@ export const PostsManagerPage = () => {
               updateURL={updateURL}
               openUserModal={openUserModal}
               openPostDetail={openPostDetail}
-              setSelectedPost={setSelectedPost}
-              setShowEditDialog={setShowEditDialog}
               deletePost={deletePost}
             />
           )}
@@ -466,29 +434,6 @@ export const PostsManagerPage = () => {
           </div>
         </div>
       </CardContent>
-
-      {/* 게시물 수정 대화상자 */}
-      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>게시물 수정</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <Input
-              placeholder="제목"
-              value={selectedPost?.title || ""}
-              onChange={(e) => setSelectedPost({ ...selectedPost, title: e.target.value })}
-            />
-            <Textarea
-              rows={15}
-              placeholder="내용"
-              value={selectedPost?.body || ""}
-              onChange={(e) => setSelectedPost({ ...selectedPost, body: e.target.value })}
-            />
-            <Button onClick={updatePost}>게시물 업데이트</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* 댓글 추가 대화상자 */}
       <Dialog open={showAddCommentDialog} onOpenChange={setShowAddCommentDialog}>

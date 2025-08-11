@@ -1,12 +1,12 @@
 import { Post } from "@entities/post/model/types"
 import { User } from "@entities/user"
+import { EditPostButton } from "@features/post"
 import { highlightText } from "@shared/lib/highlightText"
 import { Button } from "@shared/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@shared/ui/table"
 import { Edit2, MessageSquare, ThumbsDown, ThumbsUp, Trash2 } from "lucide-react"
-import { Dispatch, SetStateAction } from "react"
 
-interface PostWithUser extends Post {
+export interface PostWithUser extends Post {
   author: Pick<User, "id" | "username" | "image">
 }
 
@@ -18,8 +18,6 @@ interface PostsTableProps {
   updateURL: () => void
   openUserModal: (user: User) => void
   openPostDetail: (post: Post) => void
-  setSelectedPost: Dispatch<SetStateAction<null>>
-  setShowEditDialog: Dispatch<SetStateAction<boolean>>
   deletePost: (postId: number) => void
 }
 
@@ -31,8 +29,6 @@ export const PostsTable = ({
   updateURL,
   openUserModal,
   openPostDetail,
-  setSelectedPost,
-  setShowEditDialog,
   deletePost,
 }: PostsTableProps) => {
   return (
@@ -93,16 +89,7 @@ export const PostsTable = ({
                 <Button variant="ghost" size="sm" onClick={() => openPostDetail(post)}>
                   <MessageSquare className="w-4 h-4" />
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setSelectedPost(post)
-                    setShowEditDialog(true)
-                  }}
-                >
-                  <Edit2 className="w-4 h-4" />
-                </Button>
+                <EditPostButton post={post} />
                 <Button variant="ghost" size="sm" onClick={() => deletePost(post.id)}>
                   <Trash2 className="w-4 h-4" />
                 </Button>
