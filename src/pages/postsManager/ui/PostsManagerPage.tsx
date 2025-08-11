@@ -8,6 +8,7 @@ import { Input } from "@shared/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@shared/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@shared/ui/table"
 import { Textarea } from "@shared/ui/textarea"
+import { useGetPosts } from "@entities/post/model/hooks/useGetPosts"
 
 export const PostsManagerPage = () => {
   const navigate = useNavigate()
@@ -37,6 +38,15 @@ export const PostsManagerPage = () => {
   const [showPostDetailDialog, setShowPostDetailDialog] = useState(false)
   const [showUserModal, setShowUserModal] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
+  const { data: postsData, isLoading } = useGetPosts({
+    skip: 0,
+    limit: 10,
+    search: searchQuery,
+    sortBy: "id",
+    order: "desc",
+  })
+
+  console.log(postsData)
 
   // URL 업데이트 함수
   const updateURL = () => {
