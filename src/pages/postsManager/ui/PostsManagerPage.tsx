@@ -1,4 +1,5 @@
 import { AddPostButton } from "@features/post"
+import { TagSelectFilter } from "@features/tag"
 import { highlightText } from "@shared/lib/highlightText"
 import { Button } from "@shared/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@shared/ui/card"
@@ -85,6 +86,7 @@ export const PostsManagerPage = () => {
     try {
       const response = await fetch("/api/posts/tags")
       const data = await response.json()
+
       setTags(data)
     } catch (error) {
       console.error("태그 가져오기 오류:", error)
@@ -337,26 +339,13 @@ export const PostsManagerPage = () => {
                 />
               </div>
             </div>
-            <Select
-              value={selectedTag}
-              onValueChange={(value) => {
-                setSelectedTag(value)
-                fetchPostsByTag(value)
-                updateURL()
-              }}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="태그 선택" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">모든 태그</SelectItem>
-                {tags.map((tag) => (
-                  <SelectItem key={tag.url} value={tag.slug}>
-                    {tag.slug}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <TagSelectFilter
+              selectedTag={selectedTag}
+              setSelectedTag={setSelectedTag}
+              fetchPostsByTag={fetchPostsByTag}
+              updateURL={updateURL}
+              tags={tags}
+            />
             <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="정렬 기준" />
