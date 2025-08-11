@@ -20,7 +20,7 @@ export const http = {
     const response = await axiosInstance.put<Response>(url, data)
     return response.data
   },
-  del: async <Response = unknown>(url: string) => {
+  delete: async <Response = unknown>(url: string) => {
     const response = await axiosInstance.delete<Response>(url)
     return response.data
   },

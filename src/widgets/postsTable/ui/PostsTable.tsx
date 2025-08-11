@@ -1,10 +1,11 @@
 import { Post } from "@entities/post/model/types"
 import { User } from "@entities/user"
 import { EditPostButton } from "@features/post"
+import { DeletePostButton } from "@features/post/ui/DeletePostButton"
 import { highlightText } from "@shared/lib/highlightText"
 import { Button } from "@shared/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@shared/ui/table"
-import { Edit2, MessageSquare, ThumbsDown, ThumbsUp, Trash2 } from "lucide-react"
+import { MessageSquare, ThumbsDown, ThumbsUp, Trash2 } from "lucide-react"
 
 export interface PostWithUser extends Post {
   author: Pick<User, "id" | "username" | "image">
@@ -18,7 +19,6 @@ interface PostsTableProps {
   updateURL: () => void
   openUserModal: (user: User) => void
   openPostDetail: (post: Post) => void
-  deletePost: (postId: number) => void
 }
 
 export const PostsTable = ({
@@ -29,7 +29,6 @@ export const PostsTable = ({
   updateURL,
   openUserModal,
   openPostDetail,
-  deletePost,
 }: PostsTableProps) => {
   return (
     <Table>
@@ -90,9 +89,7 @@ export const PostsTable = ({
                   <MessageSquare className="w-4 h-4" />
                 </Button>
                 <EditPostButton post={post} />
-                <Button variant="ghost" size="sm" onClick={() => deletePost(post.id)}>
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+                <DeletePostButton postId={post.id} />
               </div>
             </TableCell>
           </TableRow>
