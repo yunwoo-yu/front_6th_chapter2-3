@@ -20,6 +20,10 @@ export const http = {
     const response = await axiosInstance.put<Response>(url, data)
     return response.data
   },
+  patch: async <Request = unknown, Response = unknown>(url: string, data?: Request) => {
+    const response = await axiosInstance.patch<Response>(url, data)
+    return response.data
+  },
   delete: async <Response = unknown>(url: string) => {
     const response = await axiosInstance.delete<Response>(url)
     return response.data

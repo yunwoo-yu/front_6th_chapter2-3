@@ -1,6 +1,6 @@
 import { COMMENT_QUERY_KEY } from "@entities/comment/model/keys"
 import { http } from "@shared/api"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, UseQueryOptions } from "@tanstack/react-query"
 
 interface GetCommentResponse {
   total: number
@@ -15,9 +15,13 @@ const getComment = async (postId: number) => {
   return response
 }
 
-export const useGetComment = (postId: number) => {
+export const useGetComment = (
+  postId: number,
+  options?: Omit<UseQueryOptions<GetCommentResponse, Error>, "queryKey" | "queryFn">,
+) => {
   return useQuery({
     queryKey: COMMENT_QUERY_KEY.detail([postId]),
     queryFn: () => getComment(postId),
+    ...options,
   })
 }
