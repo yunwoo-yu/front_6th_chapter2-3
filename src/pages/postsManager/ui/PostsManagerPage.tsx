@@ -3,7 +3,7 @@ import { highlightText } from "@shared/lib/highlightText"
 import { Button } from "@shared/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@shared/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@shared/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@shared/ui/select"
+import { Pagination } from "@features/pagination"
 import { Textarea } from "@shared/ui/textarea"
 import { PostsFilter } from "@widgets/postsFilter"
 import { PostsTable } from "@widgets/postsTable"
@@ -239,15 +239,15 @@ export const PostsManagerPage = () => {
     updateURL()
   }, [skip, limit, sortBy, sortOrder, selectedTag])
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search)
-    setSkip(parseInt(params.get("skip") || "0"))
-    setLimit(parseInt(params.get("limit") || "10"))
-    setSearchQuery(params.get("search") || "")
-    setSortBy(params.get("sortBy") || "")
-    setSortOrder(params.get("sortOrder") || "asc")
-    setSelectedTag(params.get("tag") || "")
-  }, [location.search])
+  // useEffect(() => {
+  //   const params = new URLSearchParams(location.search)
+  //   setSkip(parseInt(params.get("skip") || "0"))
+  //   setLimit(parseInt(params.get("limit") || "10"))
+  //   setSearchQuery(params.get("search") || "")
+  //   setSortBy(params.get("sortBy") || "")
+  //   setSortOrder(params.get("sortOrder") || "asc")
+  //   setSelectedTag(params.get("tag") || "")
+  // }, [location.search])
 
   // 댓글 렌더링
   const renderComments = (postId) => (
@@ -338,30 +338,14 @@ export const PostsManagerPage = () => {
           )}
 
           {/* 페이지네이션 */}
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <span>표시</span>
-              <Select value={limit.toString()} onValueChange={(value) => setLimit(Number(value))}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="10" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                  <SelectItem value="30">30</SelectItem>
-                </SelectContent>
-              </Select>
-              <span>항목</span>
-            </div>
-            <div className="flex gap-2">
-              <Button disabled={skip === 0} onClick={() => setSkip(Math.max(0, skip - limit))}>
-                이전
-              </Button>
-              <Button disabled={skip + limit >= total} onClick={() => setSkip(skip + limit)}>
-                다음
-              </Button>
-            </div>
-          </div>
+          <Pagination
+            skip={skip}
+            limit={limit}
+            total={total}
+            onLimitChange={(v) => setLimit(v)}
+            onPrev={() => setSkip(Math.max(0, skip - limit))}
+            onNext={() => setSkip(skip + limit)}
+          />
         </div>
       </CardContent>
 
