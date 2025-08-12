@@ -17,7 +17,7 @@ export const PostDetailModal = ({ post, searchQuery = "", open, onOpenChange }: 
   const { data: commentsData } = useGetComment(post?.id || 1, {
     enabled: !!post?.id && open,
   })
-  const { mutate: likeCommentMutation } = useLikeComment()
+  const { mutate: likeCommentMutation } = useLikeComment(post?.id || 1)
 
   const comments = commentsData?.comments || []
 
