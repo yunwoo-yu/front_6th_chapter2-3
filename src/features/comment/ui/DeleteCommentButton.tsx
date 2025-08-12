@@ -11,7 +11,7 @@ export const DeleteCommentButton = ({ comment }: DeleteCommentButtonProps) => {
   const { mutate: deleteComment } = useDeleteComment()
 
   return (
-    <Button variant="ghost" size="sm" onClick={() => deleteComment({ id: comment.id })}>
+    <Button variant="ghost" size="sm" onClick={() => deleteComment({ id: comment.id, postId: comment.postId })}>
       <Trash2 className="w-3 h-3" />
     </Button>
   )

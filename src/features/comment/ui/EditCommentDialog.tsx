@@ -16,7 +16,11 @@ export const EditCommentDialog = ({ isOpen, onOpenChange, comment }: EditComment
   const { mutate: updateComment } = useEditComment()
 
   const handleUpdateComment = () => {
-    updateComment({ id: selectedComment.id, body: selectedComment.body })
+    updateComment({
+      id: selectedComment.id,
+      body: selectedComment.body,
+      postId: selectedComment.postId,
+    })
   }
 
   return (
