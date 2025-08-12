@@ -1,4 +1,4 @@
-import { Tag } from "@entities/tag"
+import { useGetTags } from "@entities/tag"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@shared/ui/select"
 
 interface TagSelectFilterProps {
@@ -6,16 +6,11 @@ interface TagSelectFilterProps {
   setSelectedTag: (tag: string) => void
   fetchPostsByTag: (tag: string) => void
   updateURL: () => void
-  tags: Tag[]
 }
 
-export const TagSelectFilter = ({
-  selectedTag,
-  setSelectedTag,
-  fetchPostsByTag,
-  updateURL,
-  tags,
-}: TagSelectFilterProps) => {
+export const TagSelectFilter = ({ selectedTag, setSelectedTag, fetchPostsByTag, updateURL }: TagSelectFilterProps) => {
+  const { data: tags } = useGetTags()
+
   return (
     <Select
       value={selectedTag}
@@ -30,7 +25,7 @@ export const TagSelectFilter = ({
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="all">모든 태그</SelectItem>
-        {tags.map((tag) => (
+        {tags?.map((tag) => (
           <SelectItem key={tag.url} value={tag.slug}>
             {tag.slug}
           </SelectItem>

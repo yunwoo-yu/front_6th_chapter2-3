@@ -27,7 +27,6 @@ export const PostsManagerPage = () => {
   const [sortOrder, setSortOrder] = useState(queryParams.get("sortOrder") || "asc")
 
   const [loading, setLoading] = useState(false)
-  const [tags, setTags] = useState([])
   const [selectedTag, setSelectedTag] = useState(queryParams.get("tag") || "")
   const [comments, setComments] = useState({})
   const [selectedComment, setSelectedComment] = useState(null)
@@ -78,18 +77,6 @@ export const PostsManagerPage = () => {
       .finally(() => {
         setLoading(false)
       })
-  }
-
-  // 태그 가져오기
-  const fetchTags = async () => {
-    try {
-      const response = await fetch("/api/posts/tags")
-      const data = await response.json()
-
-      setTags(data)
-    } catch (error) {
-      console.error("태그 가져오기 오류:", error)
-    }
   }
 
   // 게시물 검색
@@ -244,10 +231,6 @@ export const PostsManagerPage = () => {
   }
 
   useEffect(() => {
-    fetchTags()
-  }, [])
-
-  useEffect(() => {
     if (selectedTag) {
       fetchPostsByTag(selectedTag)
     } else {
@@ -333,7 +316,6 @@ export const PostsManagerPage = () => {
             setSelectedTag={setSelectedTag}
             fetchPostsByTag={fetchPostsByTag}
             updateURL={updateURL}
-            tags={tags}
             sortBy={sortBy}
             setSortBy={setSortBy}
             sortOrder={sortOrder}

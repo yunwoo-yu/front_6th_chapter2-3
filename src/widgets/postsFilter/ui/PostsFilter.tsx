@@ -1,4 +1,3 @@
-import { Tag } from "@entities/tag"
 import { SearchPostInput } from "@features/post"
 import { SortBySelect, SortOrderSelect } from "@features/sort"
 import { TagSelectFilter } from "@features/tag"
@@ -16,7 +15,6 @@ interface PostsFilterProps {
   setSortBy: Dispatch<SetStateAction<string>>
   fetchPostsByTag: (tag: string) => void
   updateURL: () => void
-  tags: Tag[]
 }
 
 export const PostsFilter = ({
@@ -27,7 +25,6 @@ export const PostsFilter = ({
   setSelectedTag,
   fetchPostsByTag,
   updateURL,
-  tags,
   sortBy,
   setSortBy,
   sortOrder,
@@ -41,7 +38,6 @@ export const PostsFilter = ({
         setSelectedTag={setSelectedTag}
         fetchPostsByTag={fetchPostsByTag}
         updateURL={updateURL}
-        tags={tags}
       />
       <SortBySelect sortBy={sortBy} setSortBy={setSortBy} />
       <SortOrderSelect sortOrder={sortOrder} setSortOrder={setSortOrder} />
