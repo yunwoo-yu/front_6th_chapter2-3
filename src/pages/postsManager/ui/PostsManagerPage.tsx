@@ -1,13 +1,14 @@
+import { AddCommentButton } from "@features/comment"
+import { Pagination } from "@features/pagination"
 import { AddPostButton } from "@features/post"
 import { highlightText } from "@shared/lib/highlightText"
 import { Button } from "@shared/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@shared/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@shared/ui/dialog"
-import { Pagination } from "@features/pagination"
 import { Textarea } from "@shared/ui/textarea"
 import { PostsFilter } from "@widgets/postsFilter"
 import { PostsTable } from "@widgets/postsTable"
-import { Edit2, Plus, ThumbsUp, Trash2 } from "lucide-react"
+import { Edit2, ThumbsUp, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
@@ -30,8 +31,6 @@ export const PostsManagerPage = () => {
   const [selectedTag, setSelectedTag] = useState(queryParams.get("tag") || "")
   const [comments, setComments] = useState({})
   const [selectedComment, setSelectedComment] = useState(null)
-  const [newComment, setNewComment] = useState({ body: "", postId: null, userId: 1 })
-  const [showAddCommentDialog, setShowAddCommentDialog] = useState(false)
   const [showEditCommentDialog, setShowEditCommentDialog] = useState(false)
   const [showPostDetailDialog, setShowPostDetailDialog] = useState(false)
   const [showUserModal, setShowUserModal] = useState(false)
@@ -55,7 +54,7 @@ export const PostsManagerPage = () => {
     let postsData
     let usersData
 
-    fetch(`/api/posts?limit=${limit}&skip=${skip}`)
+    fetch(`/api/posts?limit=${limit}&skip=${skip}&sortBy=${sortBy}&order=${sortOrder}`)
       .then((response) => response.json())
       .then((data) => {
         postsData = data
@@ -134,26 +133,6 @@ export const PostsManagerPage = () => {
       setComments((prev) => ({ ...prev, [postId]: data.comments }))
     } catch (error) {
       console.error("댓글 가져오기 오류:", error)
-    }
-  }
-
-  // 댓글 추가
-  const addComment = async () => {
-    try {
-      const response = await fetch("/api/comments/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newComment),
-      })
-      const data = await response.json()
-      setComments((prev) => ({
-        ...prev,
-        [data.postId]: [...(prev[data.postId] || []), data],
-      }))
-      setShowAddCommentDialog(false)
-      setNewComment({ body: "", postId: null, userId: 1 })
-    } catch (error) {
-      console.error("댓글 추가 오류:", error)
     }
   }
 
@@ -239,31 +218,22 @@ export const PostsManagerPage = () => {
     updateURL()
   }, [skip, limit, sortBy, sortOrder, selectedTag])
 
-  // useEffect(() => {
-  //   const params = new URLSearchParams(location.search)
-  //   setSkip(parseInt(params.get("skip") || "0"))
-  //   setLimit(parseInt(params.get("limit") || "10"))
-  //   setSearchQuery(params.get("search") || "")
-  //   setSortBy(params.get("sortBy") || "")
-  //   setSortOrder(params.get("sortOrder") || "asc")
-  //   setSelectedTag(params.get("tag") || "")
-  // }, [location.search])
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    setSkip(parseInt(params.get("skip") || "0"))
+    setLimit(parseInt(params.get("limit") || "10"))
+    setSearchQuery(params.get("search") || "")
+    setSortBy(params.get("sortBy") || "")
+    setSortOrder(params.get("sortOrder") || "asc")
+    setSelectedTag(params.get("tag") || "")
+  }, [location.search])
 
   // 댓글 렌더링
   const renderComments = (postId) => (
     <div className="mt-2">
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-sm font-semibold">댓글</h3>
-        <Button
-          size="sm"
-          onClick={() => {
-            setNewComment((prev) => ({ ...prev, postId }))
-            setShowAddCommentDialog(true)
-          }}
-        >
-          <Plus className="w-3 h-3 mr-1" />
-          댓글 추가
-        </Button>
+        <AddCommentButton postId={postId} />
       </div>
       <div className="space-y-1">
         {comments[postId]?.map((comment) => (
@@ -348,23 +318,6 @@ export const PostsManagerPage = () => {
           />
         </div>
       </CardContent>
-
-      {/* 댓글 추가 대화상자 */}
-      <Dialog open={showAddCommentDialog} onOpenChange={setShowAddCommentDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>새 댓글 추가</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <Textarea
-              placeholder="댓글 내용"
-              value={newComment.body}
-              onChange={(e) => setNewComment({ ...newComment, body: e.target.value })}
-            />
-            <Button onClick={addComment}>댓글 추가</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* 댓글 수정 대화상자 */}
       <Dialog open={showEditCommentDialog} onOpenChange={setShowEditCommentDialog}>

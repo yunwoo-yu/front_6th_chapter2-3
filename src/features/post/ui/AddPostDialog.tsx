@@ -6,11 +6,11 @@ import { Textarea } from "@shared/ui/textarea"
 import { useState } from "react"
 
 interface AddPostDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
+  isOpen: boolean
+  onOpenChange: (isOpen: boolean) => void
 }
 
-export const AddPostDialog = ({ open, onOpenChange }: AddPostDialogProps) => {
+export const AddPostDialog = ({ isOpen, onOpenChange }: AddPostDialogProps) => {
   const [newPost, setNewPost] = useState<CreatePostBody>({
     title: "",
     body: "",
@@ -24,7 +24,7 @@ export const AddPostDialog = ({ open, onOpenChange }: AddPostDialogProps) => {
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>새 게시물 추가</DialogTitle>
