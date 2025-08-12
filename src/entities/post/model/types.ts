@@ -1,3 +1,5 @@
+import { User } from "@entities/user"
+
 export interface PostReactions {
   likes: number
   dislikes: number
@@ -11,4 +13,5 @@ export interface Post {
   body: string
   reactions: PostReactions
   tags: string[]
+  author: User
 }

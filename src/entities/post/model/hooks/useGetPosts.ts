@@ -2,7 +2,7 @@ import { POSTS_QUERY_KEY } from "@entities/post/model/keys"
 import { Post } from "@entities/post/model/types"
 import { getUsers } from "@entities/user"
 import { http } from "@shared/api"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, UseQueryOptions } from "@tanstack/react-query"
 
 interface GetPostsRequestParams {
   skip?: number
@@ -45,9 +45,10 @@ const getPosts = async (params: GetPostsRequestParams) => {
   return result
 }
 
-export const useGetPosts = (params: GetPostsRequestParams) => {
+export const useGetPosts = (params: GetPostsRequestParams, options?: Omit<UseQueryOptions, "queryKey" | "queryFn">) => {
   return useQuery({
     queryKey: POSTS_QUERY_KEY.list([params]),
     queryFn: () => getPosts(params),
+    ...options,
   })
 }

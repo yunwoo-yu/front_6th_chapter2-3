@@ -1,14 +1,20 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@shared/ui/select"
-import { Dispatch, SetStateAction } from "react"
+import { useSearchParams } from "react-router-dom"
 
-interface SortOrderSelectProps {
-  sortOrder: string
-  setSortOrder: Dispatch<SetStateAction<string>>
-}
+export const SortOrderSelect = () => {
+  const [searchParams, setSearchParams] = useSearchParams()
 
-export const SortOrderSelect = ({ sortOrder, setSortOrder }: SortOrderSelectProps) => {
+  const handleSortOrderChange = (sortOrder: string) => {
+    setSearchParams((prev) => {
+      const updated = new URLSearchParams(prev)
+
+      updated.set("sortOrder", sortOrder)
+      return updated
+    })
+  }
+
   return (
-    <Select value={sortOrder} onValueChange={setSortOrder}>
+    <Select value={searchParams.get("sortOrder") || "asc"} onValueChange={handleSortOrderChange}>
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="정렬 순서" />
       </SelectTrigger>

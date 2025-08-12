@@ -1,55 +1,69 @@
 import { Pagination } from "@features/pagination"
 import { AddPostButton } from "@features/post"
 import { Card, CardContent, CardHeader, CardTitle } from "@shared/ui/card"
+import { PostDetailModal } from "@widgets/postDetailModal"
 import { PostsFilter } from "@widgets/postsFilter"
 import { PostsTable } from "@widgets/postsTable"
-import { PostDetailModal } from "@widgets/postDetailModal"
 import { UserModal } from "@widgets/userModal"
 
-import { useEffect, useState } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
 import { Post } from "@entities/post"
 import { User } from "@entities/user"
+import { useEffect, useState } from "react"
+import { useSearchParams } from "react-router-dom"
 
 export const PostsManagerPage = () => {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const queryParams = new URLSearchParams(location.search)
-
-  // 상태 관리
-  const [posts, setPosts] = useState([])
+  // 상태 관리 (URL에 없는 것들만)
+  const [posts, setPosts] = useState<Post[]>([])
   const [total, setTotal] = useState(0)
-  const [skip, setSkip] = useState(parseInt(queryParams.get("skip") || "0"))
-  const [limit, setLimit] = useState(parseInt(queryParams.get("limit") || "10"))
-  const [searchQuery, setSearchQuery] = useState(queryParams.get("search") || "")
   const [selectedPost, setSelectedPost] = useState<Post | null>(null)
-  const [sortBy, setSortBy] = useState(queryParams.get("sortBy") || "")
-  const [sortOrder, setSortOrder] = useState(queryParams.get("sortOrder") || "asc")
-
   const [loading, setLoading] = useState(false)
-  const [selectedTag, setSelectedTag] = useState(queryParams.get("tag") || "")
-
   const [showPostDetailDialog, setShowPostDetailDialog] = useState(false)
   const [showUserModal, setShowUserModal] = useState(false)
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  // URL params에서 직접 값 가져오기
+  const skip = parseInt(searchParams.get("skip") || "0")
+  const limit = parseInt(searchParams.get("limit") || "10")
+  const searchQuery = searchParams.get("search") || ""
+  const sortBy = searchParams.get("sortBy") || ""
+  const sortOrder = searchParams.get("sortOrder") || "asc"
+  const selectedTag = searchParams.get("tag") || ""
+
+  // 기본 포스트 목록 훅 (검색/태그 없을 때만)
+  // const { data: hookPosts } = useGetPosts({
+  //   skip,
+  //   limit,
+  //   sortBy: sortBy as "id" | "title" | "reactions" | undefined,
+  //   order: sortOrder as "asc" | "desc",
+  // })
+
+  // console.log(hookPosts)
 
   // URL 업데이트 함수
-  const updateURL = () => {
-    const params = new URLSearchParams()
-    if (skip) params.set("skip", skip.toString())
-    if (limit) params.set("limit", limit.toString())
-    if (searchQuery) params.set("search", searchQuery)
-    if (sortBy) params.set("sortBy", sortBy)
-    if (sortOrder) params.set("sortOrder", sortOrder)
-    if (selectedTag) params.set("tag", selectedTag)
-    navigate(`?${params.toString()}`)
+
+  const updateURL = (newParams: Record<string, string | number | undefined | null> = {}) => {
+    setSearchParams((prev) => {
+      const updated = new URLSearchParams(prev)
+
+      // 새로운 파라미터들 적용
+      Object.entries(newParams).forEach(([key, value]) => {
+        if (value === null || value === undefined || value === "") {
+          updated.delete(key)
+        } else {
+          updated.set(key, value.toString())
+        }
+      })
+
+      return updated
+    })
   }
 
   // 게시물 가져오기
   const fetchPosts = () => {
     setLoading(true)
-    let postsData
-    let usersData
+    let postsData: any
+    let usersData: any
 
     fetch(`/api/posts?limit=${limit}&skip=${skip}&sortBy=${sortBy}&order=${sortOrder}`)
       .then((response) => response.json())
@@ -60,9 +74,9 @@ export const PostsManagerPage = () => {
       .then((response) => response.json())
       .then((users) => {
         usersData = users.users
-        const postsWithUsers = postsData.posts.map((post) => ({
+        const postsWithUsers = postsData.posts.map((post: any) => ({
           ...post,
-          author: usersData.find((user) => user.id === post.userId),
+          author: usersData.find((user: any) => user.id === post.userId),
         }))
         setPosts(postsWithUsers)
         setTotal(postsData.total)
@@ -75,30 +89,8 @@ export const PostsManagerPage = () => {
       })
   }
 
-  // 게시물 검색
-  const searchPosts = async () => {
-    if (!searchQuery) {
-      fetchPosts()
-      return
-    }
-    setLoading(true)
-    try {
-      const response = await fetch(`/api/posts/search?q=${searchQuery}`)
-      const data = await response.json()
-      setPosts(data.posts)
-      setTotal(data.total)
-    } catch (error) {
-      console.error("게시물 검색 오류:", error)
-    }
-    setLoading(false)
-  }
-
-  // 태그별 게시물 가져오기
-  const fetchPostsByTag = async (tag) => {
-    if (!tag || tag === "all") {
-      fetchPosts()
-      return
-    }
+  // 실제 태그별 데이터 로딩 (useEffect에서 호출)
+  const fetchPostsByTag = async (tag: string) => {
     setLoading(true)
     try {
       const [postsResponse, usersResponse] = await Promise.all([
@@ -108,15 +100,29 @@ export const PostsManagerPage = () => {
       const postsData = await postsResponse.json()
       const usersData = await usersResponse.json()
 
-      const postsWithUsers = postsData.posts.map((post) => ({
+      const postsWithUsers = postsData.posts.map((post: any) => ({
         ...post,
-        author: usersData.users.find((user) => user.id === post.userId),
+        author: usersData.users.find((user: any) => user.id === post.userId),
       }))
 
       setPosts(postsWithUsers)
       setTotal(postsData.total)
     } catch (error) {
       console.error("태그별 게시물 가져오기 오류:", error)
+    }
+    setLoading(false)
+  }
+
+  // 검색 실행 (useEffect에서 호출)
+  const executeSearch = async () => {
+    setLoading(true)
+    try {
+      const response = await fetch(`/api/posts/search?q=${searchQuery}`)
+      const data = await response.json()
+      setPosts(data.posts)
+      setTotal(data.total)
+    } catch (error) {
+      console.error("게시물 검색 오류:", error)
     }
     setLoading(false)
   }
@@ -133,24 +139,16 @@ export const PostsManagerPage = () => {
     setShowUserModal(true)
   }
 
+  // URL 파라미터 변경에 따른 데이터 로딩
   useEffect(() => {
-    if (selectedTag) {
+    if (searchQuery) {
+      executeSearch()
+    } else if (selectedTag) {
       fetchPostsByTag(selectedTag)
     } else {
       fetchPosts()
     }
-    updateURL()
-  }, [skip, limit, sortBy, sortOrder, selectedTag])
-
-  useEffect(() => {
-    const params = new URLSearchParams(location.search)
-    setSkip(parseInt(params.get("skip") || "0"))
-    setLimit(parseInt(params.get("limit") || "10"))
-    setSearchQuery(params.get("search") || "")
-    setSortBy(params.get("sortBy") || "")
-    setSortOrder(params.get("sortOrder") || "asc")
-    setSelectedTag(params.get("tag") || "")
-  }, [location.search])
+  }, [skip, limit, sortBy, sortOrder, selectedTag, searchQuery])
 
   return (
     <Card className="w-full max-w-6xl mx-auto">
@@ -163,19 +161,7 @@ export const PostsManagerPage = () => {
       <CardContent>
         <div className="flex flex-col gap-4">
           {/* 검색 및 필터 컨트롤 */}
-          <PostsFilter
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            searchPosts={searchPosts}
-            selectedTag={selectedTag}
-            setSelectedTag={setSelectedTag}
-            fetchPostsByTag={fetchPostsByTag}
-            updateURL={updateURL}
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-            sortOrder={sortOrder}
-            setSortOrder={setSortOrder}
-          />
+          <PostsFilter />
 
           {/* 게시물 테이블 */}
           {loading ? (
@@ -184,9 +170,6 @@ export const PostsManagerPage = () => {
             <PostsTable
               posts={posts}
               searchQuery={searchQuery}
-              selectedTag={selectedTag}
-              setSelectedTag={setSelectedTag}
-              updateURL={updateURL}
               openUserModal={openUserModal}
               openPostDetail={openPostDetail}
             />
@@ -197,9 +180,9 @@ export const PostsManagerPage = () => {
             skip={skip}
             limit={limit}
             total={total}
-            onLimitChange={(v) => setLimit(v)}
-            onPrev={() => setSkip(Math.max(0, skip - limit))}
-            onNext={() => setSkip(skip + limit)}
+            onLimitChange={(v) => updateURL({ limit: v, skip: 0 })}
+            onPrev={() => updateURL({ skip: Math.max(0, skip - limit) })}
+            onNext={() => updateURL({ skip: skip + limit })}
           />
         </div>
       </CardContent>

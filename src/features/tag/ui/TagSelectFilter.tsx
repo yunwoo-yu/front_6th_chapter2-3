@@ -1,23 +1,30 @@
 import { useGetTags } from "@entities/tag"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@shared/ui/select"
+import { useSearchParams } from "react-router-dom"
 
-interface TagSelectFilterProps {
-  selectedTag: string
-  setSelectedTag: (tag: string) => void
-  fetchPostsByTag: (tag: string) => void
-  updateURL: () => void
-}
-
-export const TagSelectFilter = ({ selectedTag, setSelectedTag, fetchPostsByTag, updateURL }: TagSelectFilterProps) => {
+export const TagSelectFilter = () => {
+  const [searchParams, setSearchParams] = useSearchParams()
   const { data: tags } = useGetTags()
+
+  const handleTagChange = (tag: string) => {
+    setSearchParams((prev) => {
+      const updated = new URLSearchParams(prev)
+
+      if (tag === "all") {
+        updated.delete("tag")
+      } else {
+        updated.set("tag", tag)
+      }
+
+      return updated
+    })
+  }
 
   return (
     <Select
-      value={selectedTag}
+      value={searchParams.get("tag") || "all"}
       onValueChange={(value) => {
-        setSelectedTag(value)
-        fetchPostsByTag(value)
-        updateURL()
+        handleTagChange(value)
       }}
     >
       <SelectTrigger className="w-[180px]">

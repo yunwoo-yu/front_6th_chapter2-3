@@ -5,31 +5,33 @@ import { DeletePostButton } from "@features/post/ui/DeletePostButton"
 import { highlightText } from "@shared/lib/highlightText"
 import { Button } from "@shared/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@shared/ui/table"
-import { MessageSquare, ThumbsDown, ThumbsUp, Trash2 } from "lucide-react"
-
-export interface PostWithUser extends Post {
-  author: Pick<User, "id" | "username" | "image">
-}
+import { MessageSquare, ThumbsDown, ThumbsUp } from "lucide-react"
+import { useSearchParams } from "react-router-dom"
 
 interface PostsTableProps {
-  posts: PostWithUser[]
+  posts: Post[]
   searchQuery: string
-  selectedTag: string
-  setSelectedTag: (tag: string) => void
-  updateURL: () => void
   openUserModal: (user: User) => void
   openPostDetail: (post: Post) => void
 }
 
-export const PostsTable = ({
-  posts,
-  searchQuery,
-  selectedTag,
-  setSelectedTag,
-  updateURL,
-  openUserModal,
-  openPostDetail,
-}: PostsTableProps) => {
+export const PostsTable = ({ posts, searchQuery, openUserModal, openPostDetail }: PostsTableProps) => {
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const handleTagChange = (tag: string) => {
+    setSearchParams((prev) => {
+      const updated = new URLSearchParams(prev)
+
+      if (tag === "all") {
+        updated.delete("tag")
+      } else {
+        updated.set("tag", tag)
+      }
+
+      return updated
+    })
+  }
+
   return (
     <Table>
       <TableHeader>
@@ -54,14 +56,11 @@ export const PostsTable = ({
                     <span
                       key={tag}
                       className={`px-1 text-[9px] font-semibold rounded-[4px] cursor-pointer ${
-                        selectedTag === tag
+                        searchParams.get("tag") === tag
                           ? "text-white bg-blue-500 hover:bg-blue-600"
                           : "text-blue-800 bg-blue-100 hover:bg-blue-200"
                       }`}
-                      onClick={() => {
-                        setSelectedTag(tag)
-                        updateURL()
-                      }}
+                      onClick={() => handleTagChange(tag)}
                     >
                       {tag}
                     </span>

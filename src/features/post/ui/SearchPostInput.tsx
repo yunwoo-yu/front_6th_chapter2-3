@@ -1,14 +1,30 @@
 import { Input } from "@shared/ui/input"
 import { Search } from "lucide-react"
-import { Dispatch, SetStateAction } from "react"
+import { useState } from "react"
+import { useSearchParams } from "react-router-dom"
 
-interface SearchPostInputProps {
-  searchQuery: string
-  setSearchQuery: Dispatch<SetStateAction<string>>
-  searchPosts: () => void
-}
+export const SearchPostInput = () => {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "")
 
-export const SearchPostInput = ({ searchQuery, setSearchQuery, searchPosts }: SearchPostInputProps) => {
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== "Enter") {
+      return
+    }
+
+    setSearchParams((prev) => {
+      const updated = new URLSearchParams(prev)
+
+      if (searchQuery) {
+        updated.set("search", searchQuery)
+      } else {
+        updated.delete("search")
+      }
+
+      return updated
+    })
+  }
+
   return (
     <div className="flex-1">
       <div className="relative">
@@ -18,7 +34,7 @@ export const SearchPostInput = ({ searchQuery, setSearchQuery, searchPosts }: Se
           className="pl-8"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && searchPosts()}
+          onKeyDown={handleSearch}
         />
       </div>
     </div>

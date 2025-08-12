@@ -1,14 +1,25 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@shared/ui/select"
-import { Dispatch, SetStateAction } from "react"
+import { useSearchParams } from "react-router-dom"
 
-interface SortBySelectProps {
-  sortBy: string
-  setSortBy: Dispatch<SetStateAction<string>>
-}
+export const SortBySelect = () => {
+  const [searchParams, setSearchParams] = useSearchParams()
 
-export const SortBySelect = ({ sortBy, setSortBy }: SortBySelectProps) => {
+  const handleSortByChange = (sortBy: string) => {
+    setSearchParams((prev) => {
+      const updated = new URLSearchParams(prev)
+
+      if (sortBy === "none") {
+        updated.delete("sortBy")
+      } else {
+        updated.set("sortBy", sortBy)
+      }
+
+      return updated
+    })
+  }
+
   return (
-    <Select value={sortBy} onValueChange={setSortBy}>
+    <Select value={searchParams.get("sortBy") || "none"} onValueChange={handleSortByChange}>
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="정렬 기준" />
       </SelectTrigger>
