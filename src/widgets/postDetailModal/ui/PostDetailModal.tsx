@@ -1,5 +1,5 @@
 import { useGetComment, useLikeComment } from "@entities/comment"
-import { useSelectedPostStore } from "@entities/post"
+import { usePostDetailStore } from "@entities/post"
 import { AddCommentButton, DeleteCommentButton, EditCommentButton } from "@features/comment"
 import { highlightText } from "@shared/lib/highlightText"
 import { Button } from "@shared/ui/button"
@@ -10,13 +10,14 @@ import { useShallow } from "zustand/shallow"
 
 export const PostDetailModal = () => {
   const [searchParams] = useSearchParams()
-  const { selectedPost, isOpenPostDetail, setIsOpenPostDetail } = useSelectedPostStore(
+  const { selectedPost, isOpenPostDetail, setIsOpenPostDetail } = usePostDetailStore(
     useShallow((state) => ({
       selectedPost: state.selectedPost,
       isOpenPostDetail: state.isOpenPostDetail,
       setIsOpenPostDetail: state.actions.setIsOpenPostDetail,
     })),
   )
+
   const searchQuery = searchParams.get("search") || ""
   const { data: commentsData } = useGetComment(selectedPost?.id || 1, {
     enabled: !!selectedPost?.id,
@@ -45,7 +46,7 @@ export const PostDetailModal = () => {
               <AddCommentButton postId={selectedPost?.id || 1} />
             </div>
             <div className="space-y-1">
-              {comments.map((comment: any) => (
+              {comments.map((comment) => (
                 <div key={comment.id} className="flex items-center justify-between text-sm border-b pb-1">
                   <div className="flex items-center space-x-2 overflow-hidden">
                     <span className="font-medium truncate">{comment.user.username}:</span>

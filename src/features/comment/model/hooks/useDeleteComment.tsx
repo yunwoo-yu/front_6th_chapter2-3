@@ -27,7 +27,7 @@ export const useDeleteComment = () => {
           // 해당 댓글을 목록에서 제거
           return {
             ...oldData,
-            comments: oldData.comments.filter((comment: any) => comment.id !== variables.id),
+            comments: oldData.comments.filter((comment) => comment.id !== variables.id),
             total: oldData.total - 1,
           }
         })
