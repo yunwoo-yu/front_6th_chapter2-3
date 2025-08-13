@@ -19,7 +19,7 @@ export const PostDetailModal = () => {
   )
   const searchQuery = searchParams.get("search") || ""
   const { data: commentsData } = useGetComment(selectedPost?.id || 1, {
-    enabled: !!selectedPost?.id && isOpenPostDetail,
+    enabled: !!selectedPost?.id,
   })
 
   const { mutate: likeCommentMutation } = useLikeComment(selectedPost?.id || 1)
