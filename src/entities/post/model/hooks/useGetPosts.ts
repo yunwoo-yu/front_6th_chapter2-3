@@ -11,7 +11,7 @@ interface GetPostsRequestParams {
   order?: string
 }
 
-interface GetPostsResponse {
+export interface GetPostsResponse {
   limit: number
   skip: number
   total: number

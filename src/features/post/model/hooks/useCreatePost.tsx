@@ -1,4 +1,4 @@
-import { POSTS_QUERY_KEY } from "@entities/post"
+import { GetPostsResponse, POSTS_QUERY_KEY } from "@entities/post"
 import { http } from "@shared/api"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
@@ -20,7 +20,7 @@ export const useCreatePost = () => {
   return useMutation({
     mutationFn: createPost,
     onSuccess: (createdPost) => {
-      queryClient.setQueriesData({ queryKey: POSTS_QUERY_KEY.lists() }, (oldData: any) => {
+      queryClient.setQueriesData({ queryKey: POSTS_QUERY_KEY.lists() }, (oldData: GetPostsResponse) => {
         if (!oldData?.posts) return oldData
 
         return { ...oldData, posts: [createdPost, ...oldData.posts] }

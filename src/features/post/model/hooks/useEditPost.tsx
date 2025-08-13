@@ -1,4 +1,4 @@
-import { Post, POSTS_QUERY_KEY } from "@entities/post"
+import { GetPostsResponse, Post, POSTS_QUERY_KEY } from "@entities/post"
 import { http } from "@shared/api"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
@@ -22,7 +22,7 @@ export const useEditPost = () => {
     mutationFn: editPost,
     onSuccess: (updatedPost, variables) => {
       // 모든 posts list 쿼리들을 업데이트
-      queryClient.setQueriesData({ queryKey: POSTS_QUERY_KEY.lists() }, (oldData: any) => {
+      queryClient.setQueriesData({ queryKey: POSTS_QUERY_KEY.lists() }, (oldData: GetPostsResponse) => {
         if (!oldData?.posts) return oldData
 
         return {
