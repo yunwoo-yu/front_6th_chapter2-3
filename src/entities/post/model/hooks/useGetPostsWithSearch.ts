@@ -1,8 +1,7 @@
 import { POSTS_QUERY_KEY } from "@entities/post/model/keys"
 import { Post } from "@entities/post/model/types"
-import { getUsers } from "@entities/user"
 import { http } from "@shared/api"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, UseQueryOptions } from "@tanstack/react-query"
 
 interface GetPostsWithSearchResponse {
   limit: number
@@ -12,28 +11,22 @@ interface GetPostsWithSearchResponse {
 }
 
 const getPostsWithSearch = async (searchQuery: string) => {
-  const responsePosts = await http.get<GetPostsWithSearchResponse>("/posts/search", {
+  const response = await http.get<GetPostsWithSearchResponse>("/posts/search", {
     params: {
       q: searchQuery,
     },
   })
 
-  const responseUsers = await getUsers({
-    limit: 0,
-    select: "username,image",
-  })
-
-  const result = responsePosts.posts.map((post) => ({
-    ...post,
-    author: responseUsers.users.find((user) => user.id === post.userId),
-  }))
-
-  return result
+  return response
 }
 
-export const useGetPostsWithSearch = (searchQuery: string) => {
-  return useQuery({
+export const useGetPostsWithSearch = (
+  searchQuery: string,
+  options?: Omit<UseQueryOptions<GetPostsWithSearchResponse>, "queryKey" | "queryFn">,
+) => {
+  return useQuery<GetPostsWithSearchResponse>({
     queryKey: POSTS_QUERY_KEY.list([{ search: searchQuery }]),
     queryFn: () => getPostsWithSearch(searchQuery),
+    ...options,
   })
 }
