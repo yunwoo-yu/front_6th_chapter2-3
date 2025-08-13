@@ -1,19 +1,29 @@
+import { usePostsSelector } from "@entities/post"
 import { Button } from "@shared/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@shared/ui/select"
 import { useSearchParams } from "react-router-dom"
 
-interface PaginationProps {
-  total: number
-}
-
 const LIMITS = [10, 20, 30]
 
-export const Pagination = ({ total }: PaginationProps) => {
+export const Pagination = () => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const skipParam = searchParams.get("skip")
-  const limitParam = searchParams.get("limit")
-  const skip = skipParam ? Number(skipParam) : 0
-  const limit = limitParam ? Number(limitParam) : 10
+  const searchQuery = searchParams.get("search") || ""
+  const skipParams = parseInt(searchParams.get("skip") || "0")
+  const limitParams = parseInt(searchParams.get("limit") || "10")
+  const sortBy = searchParams.get("sortBy") || ""
+  const sortOrder = searchParams.get("sortOrder") || "asc"
+  const selectedTag = searchParams.get("tag") || ""
+  const skip = skipParams ? Number(skipParams) : 0
+  const limit = limitParams ? Number(limitParams) : 10
+
+  const { total } = usePostsSelector({
+    skip,
+    limit,
+    sortBy,
+    sortOrder,
+    searchQuery,
+    selectedTag,
+  })
 
   const handleLimitChange = (value: number) => {
     setSearchParams((prev) => {

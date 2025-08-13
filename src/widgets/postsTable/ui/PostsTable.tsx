@@ -1,3 +1,4 @@
+import { usePostsSelector } from "@entities/post"
 import { Post } from "@entities/post/model/types"
 import { User } from "@entities/user"
 import { EditPostButton } from "@features/post"
@@ -9,14 +10,27 @@ import { MessageSquare, ThumbsDown, ThumbsUp } from "lucide-react"
 import { useSearchParams } from "react-router-dom"
 
 interface PostsTableProps {
-  posts: Post[]
   openUserModal: (user: User) => void
   openPostDetail: (post: Post) => void
 }
 
-export const PostsTable = ({ posts, openUserModal, openPostDetail }: PostsTableProps) => {
+export const PostsTable = ({ openUserModal, openPostDetail }: PostsTableProps) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const searchQuery = searchParams.get("search") || ""
+  const skip = parseInt(searchParams.get("skip") || "0")
+  const limit = parseInt(searchParams.get("limit") || "10")
+  const sortBy = searchParams.get("sortBy") || ""
+  const sortOrder = searchParams.get("sortOrder") || "asc"
+  const selectedTag = searchParams.get("tag") || ""
+
+  const { posts, isLoading } = usePostsSelector({
+    skip,
+    limit,
+    sortBy,
+    sortOrder,
+    searchQuery,
+    selectedTag,
+  })
 
   const handleTagChange = (tag: string) => {
     setSearchParams((prev) => {
@@ -30,6 +44,10 @@ export const PostsTable = ({ posts, openUserModal, openPostDetail }: PostsTableP
 
       return updated
     })
+  }
+
+  if (isLoading) {
+    return <div className="flex justify-center p-4">로딩 중...</div>
   }
 
   return (
@@ -50,7 +68,6 @@ export const PostsTable = ({ posts, openUserModal, openPostDetail }: PostsTableP
             <TableCell>
               <div className="space-y-1">
                 <div>{highlightText(post.title, searchQuery)}</div>
-
                 <div className="flex flex-wrap gap-1">
                   {post.tags?.map((tag) => (
                     <span
