@@ -1,5 +1,4 @@
-import { Pagination } from "@features/pagination"
-import { AddPostButton } from "@features/post"
+import { AddPostButton, Pagination } from "@features/post"
 import { Card, CardContent, CardHeader, CardTitle } from "@shared/ui/card"
 import { PostDetailModal } from "@widgets/postDetailModal"
 import { PostsFilter } from "@widgets/postsFilter"
@@ -20,7 +19,7 @@ export const PostsManagerPage = () => {
   const [showPostDetailDialog, setShowPostDetailDialog] = useState(false)
   const [showUserModal, setShowUserModal] = useState(false)
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
 
   // URL params에서 직접 값 가져오기
   const skip = parseInt(searchParams.get("skip") || "0")
@@ -41,23 +40,6 @@ export const PostsManagerPage = () => {
   // console.log(hookPosts)
 
   // URL 업데이트 함수
-
-  const updateURL = (newParams: Record<string, string | number | undefined | null> = {}) => {
-    setSearchParams((prev) => {
-      const updated = new URLSearchParams(prev)
-
-      // 새로운 파라미터들 적용
-      Object.entries(newParams).forEach(([key, value]) => {
-        if (value === null || value === undefined || value === "") {
-          updated.delete(key)
-        } else {
-          updated.set(key, value.toString())
-        }
-      })
-
-      return updated
-    })
-  }
 
   // 게시물 가져오기
   const fetchPosts = () => {
@@ -167,34 +149,14 @@ export const PostsManagerPage = () => {
           {loading ? (
             <div className="flex justify-center p-4">로딩 중...</div>
           ) : (
-            <PostsTable
-              posts={posts}
-              searchQuery={searchQuery}
-              openUserModal={openUserModal}
-              openPostDetail={openPostDetail}
-            />
+            <PostsTable posts={posts} openUserModal={openUserModal} openPostDetail={openPostDetail} />
           )}
-
-          {/* 페이지네이션 */}
-          <Pagination
-            skip={skip}
-            limit={limit}
-            total={total}
-            onLimitChange={(v) => updateURL({ limit: v, skip: 0 })}
-            onPrev={() => updateURL({ skip: Math.max(0, skip - limit) })}
-            onNext={() => updateURL({ skip: skip + limit })}
-          />
+          <Pagination total={total} />
         </div>
       </CardContent>
 
       {/* 게시물 상세 보기 대화상자 */}
-      <PostDetailModal
-        post={selectedPost}
-        searchQuery={searchQuery}
-        open={showPostDetailDialog}
-        onOpenChange={setShowPostDetailDialog}
-      />
-
+      <PostDetailModal post={selectedPost} open={showPostDetailDialog} onOpenChange={setShowPostDetailDialog} />
       {/* 사용자 모달 */}
       <UserModal userId={selectedUserId} open={showUserModal} onOpenChange={setShowUserModal} />
     </Card>

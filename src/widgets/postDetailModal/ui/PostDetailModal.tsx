@@ -5,15 +5,17 @@ import { highlightText } from "@shared/lib/highlightText"
 import { Button } from "@shared/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@shared/ui/dialog"
 import { ThumbsUp } from "lucide-react"
+import { useSearchParams } from "react-router-dom"
 
 interface PostDetailModalProps {
   post: Post | null
-  searchQuery?: string
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-export const PostDetailModal = ({ post, searchQuery = "", open, onOpenChange }: PostDetailModalProps) => {
+export const PostDetailModal = ({ post, open, onOpenChange }: PostDetailModalProps) => {
+  const [searchParams] = useSearchParams()
+  const searchQuery = searchParams.get("search") || ""
   const { data: commentsData } = useGetComment(post?.id || 1, {
     enabled: !!post?.id && open,
   })

@@ -10,13 +10,13 @@ import { useSearchParams } from "react-router-dom"
 
 interface PostsTableProps {
   posts: Post[]
-  searchQuery: string
   openUserModal: (user: User) => void
   openPostDetail: (post: Post) => void
 }
 
-export const PostsTable = ({ posts, searchQuery, openUserModal, openPostDetail }: PostsTableProps) => {
+export const PostsTable = ({ posts, openUserModal, openPostDetail }: PostsTableProps) => {
   const [searchParams, setSearchParams] = useSearchParams()
+  const searchQuery = searchParams.get("search") || ""
 
   const handleTagChange = (tag: string) => {
     setSearchParams((prev) => {
