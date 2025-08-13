@@ -1,25 +1,28 @@
 import { useGetComment, useLikeComment } from "@entities/comment"
-import { Post } from "@entities/post"
-import { AddCommentButton, EditCommentButton, DeleteCommentButton } from "@features/comment"
+import { useSelectedPostStore } from "@entities/post"
+import { AddCommentButton, DeleteCommentButton, EditCommentButton } from "@features/comment"
 import { highlightText } from "@shared/lib/highlightText"
 import { Button } from "@shared/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@shared/ui/dialog"
 import { ThumbsUp } from "lucide-react"
 import { useSearchParams } from "react-router-dom"
+import { useShallow } from "zustand/shallow"
 
-interface PostDetailModalProps {
-  post: Post | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
-
-export const PostDetailModal = ({ post, open, onOpenChange }: PostDetailModalProps) => {
+export const PostDetailModal = () => {
   const [searchParams] = useSearchParams()
+  const { selectedPost, isOpenPostDetail, setIsOpenPostDetail } = useSelectedPostStore(
+    useShallow((state) => ({
+      selectedPost: state.selectedPost,
+      isOpenPostDetail: state.isOpenPostDetail,
+      setIsOpenPostDetail: state.actions.setIsOpenPostDetail,
+    })),
+  )
   const searchQuery = searchParams.get("search") || ""
-  const { data: commentsData } = useGetComment(post?.id || 1, {
-    enabled: !!post?.id && open,
+  const { data: commentsData } = useGetComment(selectedPost?.id || 1, {
+    enabled: !!selectedPost?.id && isOpenPostDetail,
   })
-  const { mutate: likeCommentMutation } = useLikeComment(post?.id || 1)
+
+  const { mutate: likeCommentMutation } = useLikeComment(selectedPost?.id || 1)
 
   const comments = commentsData?.comments || []
 
@@ -28,18 +31,18 @@ export const PostDetailModal = ({ post, open, onOpenChange }: PostDetailModalPro
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={isOpenPostDetail} onOpenChange={setIsOpenPostDetail}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle>{highlightText(post?.title || "", searchQuery)}</DialogTitle>
+          <DialogTitle>{highlightText(selectedPost?.title || "", searchQuery)}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <p>{highlightText(post?.body || "", searchQuery)}</p>
+          <p>{highlightText(selectedPost?.body || "", searchQuery)}</p>
           {/* 댓글 섹션 */}
           <div className="mt-2">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-semibold">댓글</h3>
-              <AddCommentButton postId={post?.id || 1} />
+              <AddCommentButton postId={selectedPost?.id || 1} />
             </div>
             <div className="space-y-1">
               {comments.map((comment: any) => (

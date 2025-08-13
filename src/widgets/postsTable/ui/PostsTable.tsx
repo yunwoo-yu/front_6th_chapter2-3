@@ -1,6 +1,5 @@
-import { usePostsSelector } from "@entities/post"
-import { Post } from "@entities/post/model/types"
-import { User } from "@entities/user"
+import { usePostsSelector, useSelectedPostStore } from "@entities/post"
+import { useSelectedUserIdStore } from "@entities/user"
 import { EditPostButton } from "@features/post"
 import { DeletePostButton } from "@features/post/ui/DeletePostButton"
 import { highlightText } from "@shared/lib/highlightText"
@@ -9,12 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { MessageSquare, ThumbsDown, ThumbsUp } from "lucide-react"
 import { useSearchParams } from "react-router-dom"
 
-interface PostsTableProps {
-  openUserModal: (user: User) => void
-  openPostDetail: (post: Post) => void
-}
-
-export const PostsTable = ({ openUserModal, openPostDetail }: PostsTableProps) => {
+export const PostsTable = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const searchQuery = searchParams.get("search") || ""
   const skip = parseInt(searchParams.get("skip") || "0")
@@ -22,6 +16,8 @@ export const PostsTable = ({ openUserModal, openPostDetail }: PostsTableProps) =
   const sortBy = searchParams.get("sortBy") || ""
   const sortOrder = searchParams.get("sortOrder") || "asc"
   const selectedTag = searchParams.get("tag") || ""
+  const { setSelectedPost, setIsOpenPostDetail } = useSelectedPostStore((state) => state.actions)
+  const { setSelectedUserId, setIsOpenUserModal } = useSelectedUserIdStore((state) => state.actions)
 
   const { posts, isLoading } = usePostsSelector({
     skip,
@@ -86,7 +82,13 @@ export const PostsTable = ({ openUserModal, openPostDetail }: PostsTableProps) =
               </div>
             </TableCell>
             <TableCell>
-              <div className="flex items-center space-x-2 cursor-pointer" onClick={() => openUserModal(post.author)}>
+              <div
+                className="flex items-center space-x-2 cursor-pointer"
+                onClick={() => {
+                  setSelectedUserId(post.author?.id || 0)
+                  setIsOpenUserModal(true)
+                }}
+              >
                 <img src={post.author?.image} alt={post.author?.username} className="w-8 h-8 rounded-full" />
                 <span>{post.author?.username}</span>
               </div>
@@ -101,7 +103,14 @@ export const PostsTable = ({ openUserModal, openPostDetail }: PostsTableProps) =
             </TableCell>
             <TableCell>
               <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm" onClick={() => openPostDetail(post)}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedPost(post)
+                    setIsOpenPostDetail(true)
+                  }}
+                >
                   <MessageSquare className="w-4 h-4" />
                 </Button>
                 <EditPostButton post={post} />

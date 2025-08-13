@@ -1,19 +1,22 @@
 import { useGetUserDetail } from "@entities/user"
+import { useSelectedUserIdStore } from "@entities/user"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@shared/ui/dialog"
+import { useShallow } from "zustand/shallow"
 
-interface UserModalProps {
-  userId: number | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
-
-export const UserModal = ({ userId, open, onOpenChange }: UserModalProps) => {
-  const { data: selectedUser } = useGetUserDetail(userId || 0, {
-    enabled: !!userId && open,
+export const UserModal = () => {
+  const { selectedUserId, isOpenUserModal, setIsOpenUserModal } = useSelectedUserIdStore(
+    useShallow((state) => ({
+      selectedUserId: state.selectedUserId,
+      isOpenUserModal: state.isOpenUserModal,
+      setIsOpenUserModal: state.actions.setIsOpenUserModal,
+    })),
+  )
+  const { data: selectedUser } = useGetUserDetail(selectedUserId || 0, {
+    enabled: !!selectedUserId && isOpenUserModal,
   })
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={isOpenUserModal} onOpenChange={setIsOpenUserModal}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>사용자 정보</DialogTitle>
