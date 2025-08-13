@@ -1,6 +1,6 @@
 import { http } from "@shared/api"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { COMMENT_QUERY_KEY } from "@entities/comment"
+import { COMMENT_QUERY_KEY, GetCommentResponse } from "@entities/comment"
 
 interface UpdateCommentBody {
   id: number
@@ -24,13 +24,13 @@ export const useEditComment = () => {
     onSuccess: (_, variables) => {
       // 가짜 API이므로 클라이언트에서 직접 캐시 업데이트
       if (variables.postId) {
-        queryClient.setQueryData(COMMENT_QUERY_KEY.detail([variables.postId]), (oldData: any) => {
+        queryClient.setQueryData(COMMENT_QUERY_KEY.detail([variables.postId]), (oldData: GetCommentResponse) => {
           if (!oldData) return oldData
 
           // 해당 댓글을 찾아서 내용 수정
           return {
             ...oldData,
-            comments: oldData.comments.map((comment: any) =>
+            comments: oldData.comments.map((comment) =>
               comment.id === variables.id ? { ...comment, body: variables.body } : comment,
             ),
           }
