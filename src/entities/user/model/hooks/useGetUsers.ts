@@ -15,15 +15,15 @@ interface GetUsersResponse {
   users: User[]
 }
 
-export const getUsers = async (params: GetUsersRequestParams) => {
-  const response = await http.get<GetUsersResponse>("/users/", {
+export const getUsers = async (params?: GetUsersRequestParams) => {
+  const response = await http.get<GetUsersResponse>("/users", {
     params,
   })
 
   return response
 }
 
-export const useGetUsers = (params: GetUsersRequestParams) => {
+export const useGetUsers = (params?: GetUsersRequestParams) => {
   return useQuery({
     queryKey: USER_QUERY_KEY.list([params]),
     queryFn: () => getUsers(params),

@@ -1,6 +1,7 @@
 import { useGetPosts } from "@entities/post/model/hooks/useGetPosts"
 import { useGetPostsWithSearch } from "@entities/post/model/hooks/useGetPostsWithSearch"
 import { useGetPostsWithTag } from "@entities/post/model/hooks/useGetPostsWithTag"
+import { useGetUsers } from "@entities/user"
 
 interface UsePostsQueryParams {
   skip?: number
@@ -29,9 +30,18 @@ export const usePostsSelector = (params: UsePostsQueryParams) => {
     enabled: !!selectedTag,
   })
 
+  const { data: usersData } = useGetUsers({
+    limit: 0,
+    select: "id,username,image",
+  })
+
   if (searchQuery) {
     return {
-      posts: hookPostsWithSearch?.posts || [],
+      posts:
+        hookPostsWithSearch?.posts.map((post) => ({
+          ...post,
+          author: usersData?.users.find((user) => user.id === post.userId),
+        })) || [],
       total: hookPostsWithSearch?.total || 0,
       isLoading: isLoadingWithSearch,
     }
@@ -39,14 +49,22 @@ export const usePostsSelector = (params: UsePostsQueryParams) => {
 
   if (selectedTag) {
     return {
-      posts: hookPostsWithTag?.posts || [],
+      posts:
+        hookPostsWithTag?.posts.map((post) => ({
+          ...post,
+          author: usersData?.users.find((user) => user.id === post.userId),
+        })) || [],
       total: hookPostsWithTag?.total || 0,
       isLoading: isLoadingWithTag,
     }
   }
 
   return {
-    posts: hookPosts?.posts || [],
+    posts:
+      hookPosts?.posts.map((post) => ({
+        ...post,
+        author: usersData?.users.find((user) => user.id === post.userId),
+      })) || [],
     total: hookPosts?.total || 0,
     isLoading: isLoadingPosts,
   }
