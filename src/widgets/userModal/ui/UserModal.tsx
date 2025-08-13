@@ -1,10 +1,10 @@
 import { useGetUserDetail } from "@entities/user"
-import { useSelectedUserIdStore } from "@entities/user"
+import { useUserModalStore } from "@entities/user"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@shared/ui/dialog"
 import { useShallow } from "zustand/shallow"
 
 export const UserModal = () => {
-  const { selectedUserId, isOpenUserModal, setIsOpenUserModal } = useSelectedUserIdStore(
+  const { selectedUserId, isOpenUserModal, setIsOpenUserModal } = useUserModalStore(
     useShallow((state) => ({
       selectedUserId: state.selectedUserId,
       isOpenUserModal: state.isOpenUserModal,

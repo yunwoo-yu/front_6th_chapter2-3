@@ -2,7 +2,7 @@ export { useGetPosts } from "./model/hooks/useGetPosts"
 export { useGetPostsWithSearch } from "./model/hooks/useGetPostsWithSearch"
 export { useGetPostsWithTag } from "./model/hooks/useGetPostsWithTag"
 export { usePostsSelector } from "./model/hooks/usePostsSelector"
-export { useSelectedPostStore } from "./model/stores/useSelectedPostStore"
+export { usePostDetailStore } from "./model/stores/usePostDetailStore"
 
 export { POSTS_QUERY_KEY } from "./model/keys"
 

@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-interface SelectedUserIdStore {
+interface UserModalStore {
   selectedUserId: number | null
   isOpenUserModal: boolean
   actions: {
@@ -9,7 +9,7 @@ interface SelectedUserIdStore {
   }
 }
 
-export const useSelectedUserIdStore = create<SelectedUserIdStore>((set) => ({
+export const useUserModalStore = create<UserModalStore>((set) => ({
   selectedUserId: null,
   isOpenUserModal: false,
   actions: {

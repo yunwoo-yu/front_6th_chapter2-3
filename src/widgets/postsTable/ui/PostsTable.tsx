@@ -1,5 +1,5 @@
-import { usePostsSelector, useSelectedPostStore } from "@entities/post"
-import { useSelectedUserIdStore } from "@entities/user"
+import { usePostsSelector, usePostDetailStore } from "@entities/post"
+import { useUserModalStore } from "@entities/user"
 import { EditPostButton } from "@features/post"
 import { DeletePostButton } from "@features/post/ui/DeletePostButton"
 import { highlightText } from "@shared/lib/highlightText"
@@ -16,8 +16,8 @@ export const PostsTable = () => {
   const sortBy = searchParams.get("sortBy") || ""
   const sortOrder = searchParams.get("sortOrder") || "asc"
   const selectedTag = searchParams.get("tag") || ""
-  const { setSelectedPost, setIsOpenPostDetail } = useSelectedPostStore((state) => state.actions)
-  const { setSelectedUserId, setIsOpenUserModal } = useSelectedUserIdStore((state) => state.actions)
+  const { setSelectedPost, setIsOpenPostDetail } = usePostDetailStore((state) => state.actions)
+  const { setSelectedUserId, setIsOpenUserModal } = useUserModalStore((state) => state.actions)
 
   const { posts, isLoading } = usePostsSelector({
     skip,

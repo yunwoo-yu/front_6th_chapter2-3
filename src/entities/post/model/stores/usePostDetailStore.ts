@@ -1,7 +1,7 @@
 import { Post } from "@entities/post"
 import { create } from "zustand"
 
-interface SelectedPostStore {
+interface PostDetailStore {
   selectedPost: Post | null
   isOpenPostDetail: boolean
   actions: {
@@ -10,7 +10,7 @@ interface SelectedPostStore {
   }
 }
 
-export const useSelectedPostStore = create<SelectedPostStore>((set) => ({
+export const usePostDetailStore = create<PostDetailStore>((set) => ({
   selectedPost: null,
   isOpenPostDetail: false,
   actions: {
