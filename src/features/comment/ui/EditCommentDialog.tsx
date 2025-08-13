@@ -21,6 +21,7 @@ export const EditCommentDialog = ({ isOpen, onOpenChange, comment }: EditComment
       body: selectedComment.body,
       postId: selectedComment.postId,
     })
+    onOpenChange(false)
   }
 
   return (

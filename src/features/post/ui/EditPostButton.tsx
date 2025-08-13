@@ -1,15 +1,15 @@
+import { Post } from "@entities/post"
 import { EditPostDialog } from "@features/post/ui/EditPostDialog"
 import { Button } from "@shared/ui/button"
-import { PostWithUser } from "@widgets/postsTable/ui/PostsTable"
 import { Edit2 } from "lucide-react"
 import { useState } from "react"
 
 interface EditPostButtonProps {
-  post: PostWithUser
+  post: Post
 }
 
 export const EditPostButton = ({ post }: EditPostButtonProps) => {
-  const [selectedPost, setSelectedPost] = useState<PostWithUser | null>(null)
+  const [selectedPost, setSelectedPost] = useState<Post>(post)
   const [open, setOpen] = useState(false)
 
   const handleShowEditPostDialog = () => {
@@ -21,8 +21,6 @@ export const EditPostButton = ({ post }: EditPostButtonProps) => {
     const { name, value } = e.target
 
     setSelectedPost((prev) => {
-      if (!prev) return null
-
       return { ...prev, [name]: value }
     })
   }

@@ -13,5 +13,5 @@ export interface Post {
   body: string
   reactions: PostReactions
   tags: string[]
-  author: User
+  author?: User
 }

@@ -1,14 +1,14 @@
+import { Post } from "@entities/post"
 import { useEditPost } from "@features/post/model/hooks/useEditPost"
 import { Button } from "@shared/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@shared/ui/dialog"
 import { Input } from "@shared/ui/input"
 import { Textarea } from "@shared/ui/textarea"
-import { PostWithUser } from "@widgets/postsTable/ui/PostsTable"
 
 interface EditPostDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  selectedPost: PostWithUser | null
+  selectedPost: Post
   handleChangePost: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
 }
 
@@ -24,6 +24,7 @@ export const EditPostDialog = ({ open, onOpenChange, selectedPost, handleChangeP
       title: selectedPost.title,
       body: selectedPost.body,
     })
+    onOpenChange(false)
   }
 
   return (

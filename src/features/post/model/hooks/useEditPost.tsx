@@ -1,5 +1,6 @@
+import { Post, POSTS_QUERY_KEY } from "@entities/post"
 import { http } from "@shared/api"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 interface EditPostBody {
   id: number
@@ -9,13 +10,26 @@ interface EditPostBody {
 
 const editPost = async (post: EditPostBody) => {
   const { id, title, body } = post
-  const response = await http.put(`/posts/${id}`, { title, body })
+  const response: Post = await http.put(`/posts/${id}`, { title, body })
 
   return response
 }
 
 export const useEditPost = () => {
-  return useMutation({
+  const queryClient = useQueryClient()
+
+  return useMutation<Post, Error, EditPostBody>({
     mutationFn: editPost,
+    onSuccess: (updatedPost, variables) => {
+      // 모든 posts list 쿼리들을 업데이트
+      queryClient.setQueriesData({ queryKey: POSTS_QUERY_KEY.lists() }, (oldData: any) => {
+        if (!oldData?.posts) return oldData
+
+        return {
+          ...oldData,
+          posts: oldData.posts.map((post: Post) => (post.id === variables.id ? { ...post, ...updatedPost } : post)),
+        }
+      })
+    },
   })
 }

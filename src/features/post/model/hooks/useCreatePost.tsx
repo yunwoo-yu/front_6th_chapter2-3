@@ -1,5 +1,6 @@
+import { POSTS_QUERY_KEY } from "@entities/post"
 import { http } from "@shared/api"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export interface CreatePostBody {
   title: string
@@ -14,7 +15,16 @@ const createPost = async (formData: CreatePostBody) => {
 }
 
 export const useCreatePost = () => {
+  const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: createPost,
+    onSuccess: (createdPost) => {
+      queryClient.setQueriesData({ queryKey: POSTS_QUERY_KEY.lists() }, (oldData: any) => {
+        if (!oldData?.posts) return oldData
+
+        return { ...oldData, posts: [createdPost, ...oldData.posts] }
+      })
+    },
   })
 }

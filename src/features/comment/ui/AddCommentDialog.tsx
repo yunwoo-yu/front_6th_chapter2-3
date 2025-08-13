@@ -20,6 +20,7 @@ export const AddCommentDialog = ({ isOpen, onOpenChange, postId }: AddCommentDia
 
   const handleAddComment = () => {
     createComment(newComment)
+    onOpenChange(false)
   }
 
   return (
