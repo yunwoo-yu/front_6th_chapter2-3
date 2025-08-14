@@ -1,5 +1,5 @@
-import { Footer } from "@widgets/footer"
-import { Header } from "@widgets/header"
+import { Footer } from "@app/layout/Footer"
+import { Header } from "@app/layout/Header"
 import { Outlet } from "react-router-dom"
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
