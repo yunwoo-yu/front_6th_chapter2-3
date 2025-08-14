@@ -1,5 +1,4 @@
-import { SearchPostInput, SortBySelect, SortOrderSelect } from "@features/post"
-import { TagSelectFilter } from "@features/tag"
+import { SearchPostInput, SortBySelect, SortOrderSelect, TagSelectFilter } from "@features/post"
 
 export const PostsFilter = () => {
   return (

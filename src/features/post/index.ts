@@ -6,6 +6,7 @@ export { SearchPostInput } from "./ui/SearchPostInput"
 export { Pagination } from "./ui/Pagination"
 export { SortBySelect } from "./ui/SortBySelect"
 export { SortOrderSelect } from "./ui/SortOrderSelect"
+export { TagSelectFilter } from "./ui/TagSelectFilter"
 
 export { useCreatePost } from "./model/hooks/useCreatePost"
 export { useEditPost } from "./model/hooks/useEditPost"
