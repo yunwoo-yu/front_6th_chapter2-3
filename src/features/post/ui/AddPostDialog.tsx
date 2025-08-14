@@ -21,6 +21,7 @@ export const AddPostDialog = ({ isOpen, onOpenChange }: AddPostDialogProps) => {
 
   const handleAddPost = () => {
     createPost(newPost)
+    onOpenChange(false)
   }
 
   return (
