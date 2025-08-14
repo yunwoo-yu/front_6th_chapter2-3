@@ -1,4 +1,4 @@
-export function highlightText(text: string, query: string) {
+export const highlightText = (text: string, query: string) => {
   if (!text || !query?.trim()) return <span>{text}</span>
   const regex = new RegExp(`(${query})`, "gi")
   return (

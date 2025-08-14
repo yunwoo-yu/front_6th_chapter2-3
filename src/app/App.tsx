@@ -1,5 +1,5 @@
-import { Providers } from "@app/providers/Providers"
-import { Routers } from "@app/routers/Routers"
+import { Providers } from "@app/providers"
+import { Routers } from "@app/routers"
 import "./styles/globals.css"
 
 const App = () => {

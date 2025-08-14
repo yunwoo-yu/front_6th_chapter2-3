@@ -1,4 +1,4 @@
-import { Layout } from "@app/layout/Layout"
+import { Layout } from "@app/layout"
 import { PostsManagerPage } from "@pages/postsManager"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 
