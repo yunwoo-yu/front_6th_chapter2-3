@@ -3,8 +3,10 @@ import { PostsManagerPage } from "@pages/postsManager"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 
 export const Routers = () => {
+  const basename = import.meta.env.PROD ? "/front_6th_chapter2-3" : ""
+
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <Routes>
         <Route
           path="/"

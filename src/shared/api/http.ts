@@ -1,7 +1,12 @@
 import axios, { AxiosRequestConfig } from "axios"
 
+// 환경별 API baseURL 설정
+const API_BASE_URL = import.meta.env.PROD
+  ? "https://dummyjson.com" // 프로덕션: 직접 외부 API 호출
+  : "/api" // 개발: Vite proxy 사용
+
 const axiosInstance = axios.create({
-  baseURL: "/api",
+  baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
